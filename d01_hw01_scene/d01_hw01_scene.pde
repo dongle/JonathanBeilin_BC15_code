@@ -9,7 +9,7 @@ void setup() {
   size(1600,900);
   
   waves = createImage(1600, 900, ARGB);
-  shore = createImage(1600, 300);
+  shore = createImage(1600, 300, RGB);
   noStroke();
   
   // store colors in an array to define a palette cycle through
@@ -30,7 +30,12 @@ void setup() {
     }
   }
   
-  
+  shore.loadPixels();
+  for (int pixelCount = 0; pixelCount < shore.pixels.length; pixelCount++) {
+    int offset = int(random(70)) - 9;
+    shore.pixels[pixelCount] = color(194 + offset, 160 + offset, 117 + offset);
+  }
+  shore.updatePixels();
 }
 
 void draw() {
@@ -44,4 +49,5 @@ void draw() {
   waves.updatePixels();
   
   image(waves, 0, 0);  
+  image(shore, 0, height-300);
 }
