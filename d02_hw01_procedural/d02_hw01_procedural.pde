@@ -18,7 +18,7 @@ void setup() {
 void draw() {
   float hue = random(0, 360);
   float saturation = random(0,100);
-  float brightness = 32;
+  float brightness = random(0,100);
   float alpha = 32;
   fill(hue, saturation, brightness, alpha); 
   
