@@ -35,3 +35,7 @@ void draw() {
   int yPos = int(random(0, height));
   text(extChar, xPos, yPos);
 }
+
+void mouseClicked() {
+  saveFrame();
+}
