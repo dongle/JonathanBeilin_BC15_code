@@ -1,4 +1,19 @@
-// informed by the Textures examples
+// Plane informed by the Textures examples
+
+// TODO:
+// - draw stars
+// - add star for sounds
+// - manage stars
+// - add sound fx for each star when it drops & when hits water
+// - shake moon
+// - diffpixels amplitude waves
+
+
+import processing.video.*;
+Capture video;
+int numPixels;
+int[] previousFrame;
+int threshold = 50; // forgiveness in difference between pixels between frames
 
 PImage waves;
 
@@ -10,19 +25,32 @@ StarManager starManager = new StarManager();
 void setup() {
   size(1280, 720, P3D);
   noStroke();
-
+  
+  video = new Capture(this, width, height);
+  video.start();
+  numPixels = video.width * video.height;
+  previousFrame = new int[width * height];
+  arraycopy(video.pixels, previousFrame);
+  
   setupWaves();
 }
 
 void draw() {
+  lights();
   background(0);
 
-  drawStars();
+  int diffPixels = calculateVideoDifference();
+  println("changed pixels: " + diffPixels);
+  arraycopy(video.pixels, previousFrame);
 
-  updateWaves();
+  drawStars(diffPixels);
+
+  updateWaves(diffPixels);
   drawGroundPlane();
   
-  drawMoon();
+  drawMoon(diffPixels);
+  
+
 }
 
 void setupWaves() {
@@ -46,19 +74,25 @@ void setupWaves() {
   }
 }
 
-void drawMoon() {
-
+void drawMoon(int diffPixels) {
+  pushMatrix();
+  translate(width/2, -width/2 + 100);
+  fill(204);
+//  sphereDetail(6);
+  sphere(width/2);
+  popMatrix();
 }
 
-void drawStars() {
+void drawStars(int diffPixels) {
   starManager.updateStars();
   starManager.drawStars();
 }
 
-void updateWaves() {
+void updateWaves(int diffPixels) {
   waves.loadPixels();
+  float waveSpeed = map(diffPixels, 0, width*height, .3, 9); 
   for (int pixelCount = 0; pixelCount < colors.length; pixelCount++) {                   
-    waves.pixels[pixelCount] = palette[(colors[pixelCount] + frameCount) &127];
+   waves.pixels[pixelCount] = palette[(colors[pixelCount] + frameCount) &127];
   }
   waves.updatePixels();
 }
@@ -77,7 +111,32 @@ void drawGroundPlane() {
   popMatrix();
 }
 
-void calculatePixelDifference() {
-
+// practically speaking, range is about 1k-100k pixels
+// from handwaving etc
+int calculateVideoDifference() {
+  int changedPixels = 0;
+  if (video.available()) {
+    video.read(); // Read a new video frame
+    video.loadPixels(); // Make the pixels of video available
+    
+    for (int i = 0; i < numPixels; i++) {
+      int videoColor = video.pixels[i];
+      int videoR          = (videoColor >> 16) & 0xFF;
+      int videoG          = (videoColor >> 8) & 0xFF;
+      int videoB          = videoColor & 0xFF;
+      
+      int bgColor = previousFrame[i];
+      int bgR          = (bgColor >> 16) & 0xFF;
+      int bgG          = (bgColor >> 8) & 0xFF;
+      int bgB          = bgColor & 0xFF;
+      
+      boolean changed = (abs(videoR - bgR) > threshold) && (abs(videoG - bgG) > threshold) && (abs(videoB - bgB) > threshold);
+      if (changed) {
+        changedPixels++;
+      } 
+    }
+  }
+  
+  return changedPixels;
 }
 
