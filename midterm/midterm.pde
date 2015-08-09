@@ -74,7 +74,12 @@ void setupWaves() {
 
 void drawMoon(int diffPixels) {
   pushMatrix();
-  translate(width/2, -width/2 + 100);
+  float offSet = diffPixels/10000.0;
+  boolean xSign = random(1) < 0.5;
+  boolean ySign = random(1) < 0.5;
+  int xMultiplier = xSign ? -1 : 1;
+  int yMultiplier = ySign ? -1 : 1;
+  translate(width/2 + offSet*xMultiplier, -width/2 + 100 + offSet*yMultiplier);
   fill(204);
   //  sphereDetail(6);
   sphere(width/2);
@@ -91,14 +96,12 @@ void updateWaves(int diffPixels) {
   float waveSpeed = map(diffPixels, 0, width*height, .3, 9); 
   for (int pixelCount = 0; pixelCount < colors.length; pixelCount++) {  
     if (pixelCount >= 0 && pixelCount <= 10) {
-//      int colorspixelcount = colors[pixelCount];
-      int palIndex = (colors[pixelCount] + frameCount) &127;
-      println("palIndex: " + palIndex);
-
-      int palIndex2 = (colors[pixelCount] + frameCount) % 128;
-      println("palIndex2: " + palIndex2);
+//      int palIndexPrev = (colors[pixelCount] + frameCount) % 128;
+//      int palIndexCur = (colors[pixelCount] + frameCount) % 128;
+//      int palIndexDiff = 
+//      println("palIndex2: " + palIndex2);
     }
-    waves.pixels[pixelCount] = palette[(colors[pixelCount] + frameCount) &127];
+    waves.pixels[pixelCount] = palette[(int) (colors[pixelCount] + .3*frameCount) &127];
   }
   waves.updatePixels();
 }
