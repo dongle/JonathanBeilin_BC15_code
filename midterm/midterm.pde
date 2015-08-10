@@ -51,26 +51,28 @@ void draw() {
 //  println("changed pixels: " + diffPixels);
   arraycopy(video.pixels, previousFrame);
   
-  int avgNoise = 0;
+  float avgNoise = 0;
   for(int i = 0; i < in.bufferSize() - 1; i++)
   {
     avgNoise += abs(in.left.get(i)) + abs(in.right.get(i));
   }
-  avgNoise /= (in.bufferSize() - 1);
+  avgNoise =  avgNoise/(float)(in.bufferSize() - 1);
   
+  // range is between 0 and 2
   println("avg Noise: " + avgNoise);
 
-  drawStars(diffPixels, avgNoise);
+  int scaledNoise = (int) avgNoise * 100;
+  drawStars(diffPixels, scaledNoise);
 
-  updateWaves(diffPixels, avgNoise);
+  updateWaves(diffPixels, scaledNoise);
   drawGroundPlane();
 
-  drawMoon(diffPixels, avgNoise);
+  drawMoon(diffPixels, scaledNoise);
 }
 
 void drawStars(int diffPixels, int noise) {
   
-  int numStars = (int) (diffPixels/100000.0);
+  int numStars = (int) (diffPixels/100000.0) + (int) (noise/100.0);
   for (int i = 0; i < numStars; i++) {
     starManager.addStar();  
   }
@@ -103,7 +105,7 @@ void setupWaves() {
 
 void drawMoon(int diffPixels, int noise) {
   pushMatrix();
-  float offSet = diffPixels/10000.0;
+  float offSet = diffPixels/10000.0 + noise/2.0;
   boolean xSign = random(1) < 0.5;
   boolean ySign = random(1) < 0.5;
   int xMultiplier = xSign ? -1 : 1;
