@@ -1,13 +1,8 @@
 // Plane informed by the Textures examples
 
 // TODO:
-// - draw stars
-// - add star for sounds
-// - manage stars
-// - add sound fx for each star when it drops & when hits water
-// - shake moon
-// - diffpixels amplitude waves
-
+// - add stars for sounds
+// - adjust lighting
 
 import processing.video.*;
 Capture video;
@@ -51,6 +46,18 @@ void draw() {
   drawMoon(diffPixels);
 }
 
+void drawStars(int diffPixels) {
+  
+  int numStars = (int) (diffPixels/100000.0);
+  for (int i = 0; i < numStars; i++) {
+    starManager.addStar();  
+  }
+  
+  starManager.updateStars();
+  starManager.drawStars();
+}
+
+
 void setupWaves() {
   waves = createImage(300, 300, RGB);
   // store colors in an array to define a palette cycle through
@@ -86,11 +93,6 @@ void drawMoon(int diffPixels) {
   popMatrix();
 }
 
-void drawStars(int diffPixels) {
-  starManager.updateStars();
-  starManager.drawStars();
-}
-
 void updateWaves(int diffPixels) {
   waves.loadPixels();
   float waveSpeed = map(diffPixels, 0, width*height, .3, 9); 
@@ -108,7 +110,7 @@ void updateWaves(int diffPixels) {
 
 void drawGroundPlane() {
   pushMatrix();
-  translate(width / 2, height/3 + height / 2);
+  translate(width / 2, height/3 + 20 + height / 2);
   rotateX(PI/4);
   beginShape();
   texture(waves);

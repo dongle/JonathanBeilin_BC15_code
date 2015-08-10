@@ -7,15 +7,19 @@ class StarManager {
   }
   
   void addStar() {
+    Star star = new Star();
+    stars.add(star);
   }
   
   void updateStars() {
     for (int i = 0; i < stars.size() - 1; i++) {
       Star star = stars.get(i);
       
-      // check star on screen
-      // if not on screen
-      // stars.remove(i);
+      star.update();
+      if (star.yPos > height) {
+        stars.remove(i);
+        println("removed star");
+      }
     }
   }
   
