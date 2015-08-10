@@ -18,7 +18,6 @@ class StarManager {
       star.update();
       if (star.yPos > height) {
         stars.remove(i);
-        println("removed star");
       }
     }
   }

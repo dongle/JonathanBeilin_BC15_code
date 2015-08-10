@@ -2,9 +2,13 @@
 
 // TODO:
 // - add stars for sounds
-// - adjust lighting
 
 import processing.video.*;
+import ddf.minim.*;
+
+Minim minim;
+AudioInput in;
+
 Capture video;
 int numPixels;
 int[] previousFrame;
@@ -26,27 +30,45 @@ void setup() {
   numPixels = video.width * video.height;
   previousFrame = new int[width * height];
   arraycopy(video.pixels, previousFrame);
+  
+    minim = new Minim(this);
+  
+  // use the getLineIn method of the Minim object to get an AudioInput
+  in = minim.getLineIn();
 
   setupWaves();
 }
 
 void draw() {
   lights();
+  lightFalloff(1.0, 0.0, 2.0);
+  ambientLight(0, 0, 0);
+  directionalLight(96, 96, 96, 0.3, .3, -1);
+  
   background(0);
 
   int diffPixels = calculateVideoDifference();
 //  println("changed pixels: " + diffPixels);
   arraycopy(video.pixels, previousFrame);
+  
+  int avgNoise = 0;
+  for(int i = 0; i < in.bufferSize() - 1; i++)
+  {
+    avgNoise += abs(in.left.get(i)) + abs(in.right.get(i));
+  }
+  avgNoise /= (in.bufferSize() - 1);
+  
+  println("avg Noise: " + avgNoise);
 
-  drawStars(diffPixels);
+  drawStars(diffPixels, avgNoise);
 
-  updateWaves(diffPixels);
+  updateWaves(diffPixels, avgNoise);
   drawGroundPlane();
 
-  drawMoon(diffPixels);
+  drawMoon(diffPixels, avgNoise);
 }
 
-void drawStars(int diffPixels) {
+void drawStars(int diffPixels, int noise) {
   
   int numStars = (int) (diffPixels/100000.0);
   for (int i = 0; i < numStars; i++) {
@@ -79,7 +101,7 @@ void setupWaves() {
   }
 }
 
-void drawMoon(int diffPixels) {
+void drawMoon(int diffPixels, int noise) {
   pushMatrix();
   float offSet = diffPixels/10000.0;
   boolean xSign = random(1) < 0.5;
@@ -93,7 +115,7 @@ void drawMoon(int diffPixels) {
   popMatrix();
 }
 
-void updateWaves(int diffPixels) {
+void updateWaves(int diffPixels, int noise) {
   waves.loadPixels();
   float waveSpeed = map(diffPixels, 0, width*height, .3, 9); 
   for (int pixelCount = 0; pixelCount < colors.length; pixelCount++) {  
