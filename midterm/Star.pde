@@ -17,7 +17,7 @@ class Star {
     size = random(17) + 3;
     yPos = -size;
     xPos = random(150, width-150);
-    zPos = random(200) - 100;
+    zPos = random(width/2.0) - width/4.0;
 
     rotX = radians(random(360));
     rotY = radians(random(360));

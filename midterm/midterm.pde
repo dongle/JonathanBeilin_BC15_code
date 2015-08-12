@@ -59,7 +59,7 @@ void draw() {
   avgNoise =  avgNoise/(float)(in.bufferSize() - 1);
   
   // range is between 0 and 2
-  println("avg Noise: " + avgNoise);
+//  println("avg Noise: " + avgNoise);
 
   int scaledNoise = (int) avgNoise * 100;
   drawStars(diffPixels, scaledNoise);
