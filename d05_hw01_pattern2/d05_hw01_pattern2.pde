@@ -44,3 +44,6 @@ void makePoly(int col, int row) {
   popMatrix();
 }
 
+void mousePressed() {
+  saveFrame("pattern2.jpg");
+}

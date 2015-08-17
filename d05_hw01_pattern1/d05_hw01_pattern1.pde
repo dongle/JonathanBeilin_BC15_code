@@ -53,3 +53,6 @@ void makeSquiggle(int col, int row) {
   popMatrix();
 }
 
+void mousePressed() {
+  saveFrame("pattern1.jpg");
+}
