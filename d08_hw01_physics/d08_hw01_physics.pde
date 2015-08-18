@@ -32,3 +32,7 @@ void draw() {
   fill(255);
   ellipse(attractor.x, attractor.y, 50, 50);
 }
+
+void mousePressed() {
+  saveFrame("physics.jpg");
+}
